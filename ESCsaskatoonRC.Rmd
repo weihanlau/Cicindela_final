@@ -1,0 +1,181 @@
+---
+title: "ESC Saskatoon RC"
+author: "Wei Han"
+date: "2023-09-24"
+output: html_document
+---
+
+```{r}
+
+library(devtools)
+
+```
+
+
+```{r}
+
+devtools::install_github("StevenVB12/patternize", force = TRUE)
+
+```
+
+
+```{r}
+
+library(tidyverse)
+library(patternize)
+library(dplyr)
+library(recolorize)
+library(raster)
+library(palmerpenguins)
+library(ggplot2)
+library(cowplot)
+library(colorspace)
+library(ggfortify)
+
+```
+
+
+```{r}
+
+# make list of recolored images
+setwd("C:/Users/USER/Documents/My School Documents/UofA/Lightroom")
+#id
+recolpicsESC <- tools::file_path_sans_ext(dir("ESC/total/pictures rc/", ".JPG"))
+
+jpgESC <- makeList(recolpicsESC, type = "image", prepath = "ESC/total/pictures rc/", extension = ".JPG")
+
+```
+
+
+```{r}
+
+# make list of recolored images' landmarks (which are all the same since they are already aligned)
+setwd("C:/Users/USER/Documents/My School Documents/UofA/Lightroom")
+
+landmarkListRCESC <- makeList(recolpicsESC, type = "landmark", prepath = "ESC/total/landmarks rc/", extension = "_landmarks.txt")
+
+```
+
+
+```{r}
+setwd("C:/Users/USER/Documents/My School Documents/UofA/Lightroom")
+
+RGBmaculationESC <- c(204,174,131)
+RGBbrownESC <- c(42,25,23)
+
+IDlistLM<- tools::file_path_sans_ext(dir("ESC/total/pictures rc/", ".jpg"))
+```
+
+
+```{r}
+landmarkListRCESC[["CNC00117245"]]
+
+patlanRGBESC <- patLanRGB(jpgESC, 
+                         landmarkListRCESC,
+                         RGBmaculationESC, 
+                         colOffset = 0.05,
+                         transformRef = landmarkListRCESC[["CNC00117245"]],
+                         crop = TRUE, 
+                         res = 300,
+                         cropOffset = c(200,200,200,200),
+                         resampleFactor = 1, 
+                         adjustCoords = F,
+                         plot = "compare") 
+```
+
+
+```{r}
+#assuming single population/locality 
+
+##Ontario
+ONOttawa <- c("CNC1860337", "CNC1860338", "CNC1860339")
+ONLeeds <- c("CNC1860460", "CNC1860461", "CNC1860462", "CNC1860463", "CNC1860464")
+ONGrandB <- c("CNC1860265", "CNC1860266")
+ONNorman <- c("CNC1860342", "CNC1860367", "CNC1860368", "CNC1860369")
+
+#Quebec
+QC <- c("CNC1860249", "CNC1860252", "CNC1860253", "CNC1860255", "CNC1860257", "CNC1860260", "CNC1860261", "CNC1860262", "CNC1860263", "CNC1860264")
+
+#NJ
+NJClementon <- c("CNC1860316", "CNC1860372", "CNC1860373", "CNC1860374", "CNC1860375", "CNC1860376")
+NJOcean <- c("CNC1860380", "CNC1860381", "CNC1860382", "CNC1860305")
+
+#NY
+NY <- c("CNC1860307", "CNC1860371", "CNC1860377", "CNC1860378", "CNC1860379", "CNC1860395", "CNC1860396")
+
+#RI
+RI <- c("CNC1860320")
+
+#Mass
+MA <- c("CNC1860315", "CNC1860317", "CNC1860319", "CNC1860390", "CNC1860392", "CNC1860393", "CNC1860394")
+
+#Indiana
+IN <- c("CNC1860321", "CNC1860322", "CNC1860323")
+
+#Minnesota 
+MN <- c("CNC1860308", "CNC1860309", "CNC1860310", "CNC1860312")
+
+#Kansas
+KS <- c("CNC1860166", "CNC1860167", "CNC1860168", "CNC1860169", "CNC1860170", "CNC1860171", "CNC1860172", "CNC1860173", "CNC1860174", "CNC1860175", "CNC1860177", "CNC1860178", "CNC1860179", "CNC1860180", "CNC1860181")
+
+#North Dakota 
+ND <- c("CNC00117245", "CNC1860324", "CNC1860325", "CNC1860327", "CNC1860328", "CNC1860329", "CNC1860330", "CNC1860405", "CNC1860411")
+
+#Colorado
+CO <- c("CNC1151322", "CNC1151331", "CNC1151357", "CNC1151358", "CNC1151359", "CNC1151360", "CNC1151398")
+
+#Sask
+SK <- c("CNC1151348", "CNC1151349", "CNC1860283", "CNC1860287", "CNC1860289", "CNC1860289", "CNC1860289", "CNC1860290", "CNC1860293", "CNC1860297", "CNC1860299", "CNC1860301", "CNC1860303")
+
+#Manitoba
+MB <- c("CNC1860202", "CNC1860203", "CNC1860424", "CNC1860417", "CNC1860420", "CNC1860421")
+MBBaldhead <- c("CNC1860194", "CNC1860200", "CNC1860201", "CNC1860445", "CNC1860446", "CNC1860447")
+MBOnah <- c("CNC1860413", "CNC1860414", "CNC1860416", "CNC1860419", "CNC1860422")
+MBGlenboro <- c("CNC1860196", "CNC1860197", "CNC1860198", "CNC1860199")
+MBAweme <- c("CNC1860426", "CNC1860431", "CNC1860433", "CNC1860434", "CNC1860436", "CNC1860442")
+
+#Alberta 
+AB <- c("CNC1860136", "CNC1860139", "CNC1860141", "CNC1860141", "CNC1860143", "CNC1860144", "CNC1860149", "CNC1860150")
+
+
+popListESC <- list(RI, NY, NJClementon, NJOcean, MA, QC, ONOttawa, ONLeeds, ONGrandB, ONNorman, IN, MN, KS, ND, MB, MBBaldhead, MBOnah, MBGlenboro, MBAweme, SK, CO, AB)
+
+colListESC <- (sequential_hcl(22, palette = "Blues 2"))
+
+symbolListESC <- c(rep(18,22))
+```
+
+```{r}
+setwd("C:/Users/USER/Documents/My School Documents/UofA/Lightroom")
+
+cartoonESC = read.table('ESC/total/outlines/rcoutline.txt', h = F)
+```
+
+```{r}
+ESCPCA <- patPCA(patlanRGBESC, 
+       popListESC,
+       colListESC,
+       symbolList = symbolListESC, 
+       plot = TRUE,
+       plotType = "points",
+       plotChanges = TRUE,
+       plotCartoon = TRUE,
+       refShape = "target",
+       refImage = jpgESC[["CNC00117245"]], 
+       outline = cartoonESC,
+       imageList = jpgESC,
+       normalized = TRUE,
+       cartoonID = "CNC00117245",
+       cartoonFill = "black", 
+       cartoonOrder = "under", 
+       legendTitle = "Differences", 
+       flipRaster = "xy")
+
+comp <- ESCPCA[[3]]
+```
+
+```{r}
+autoplot(comp, colour = )
+
+```
+
